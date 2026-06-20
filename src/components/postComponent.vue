@@ -1,9 +1,28 @@
 <template>
-  
+  <div>
+    <h1>Latest Posts</h1>
+
+    <p v-if="error">{{ error }}</p>
+
+    <div class="post-container">
+      <div
+        class="post"
+        v-for="(post) in posts"
+        :key="post._id"
+      >
+        <p>{{ post.text }}</p>
+        <small>
+          {{ post.createdAt.getDate() }}/
+          {{ post.createdAt.getMonth() + 1 }}/
+          {{ post.createdAt.getFullYear() }}
+        </small>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import PostService from '../PostService';
+import { getPosts } from '../PostService';
 export default {
   name: 'PostComponent',
   data() {
@@ -15,7 +34,7 @@ export default {
   },
   async created(){
     try{
-      this.posts = await PostService.getPosts();
+      this.posts = await getPosts();
     } catch (error) {
       this.error = error.message;
     }

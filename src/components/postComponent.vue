@@ -1,7 +1,14 @@
 <template>
   <div>
     <h1>Latest Posts</h1>
-
+    <div>
+      <input
+        type="text"
+        v-model="text"
+        placeholder="Write a post..."
+      />
+      <button v-on:click="createPost">Post</button> 
+    </div>
     <p v-if="error">{{ error }}</p>
 
     <div class="post-container">
@@ -9,12 +16,15 @@
         class="post"
         v-for="(post) in posts"
         :key="post._id"
+        @click="deletePosts(post._id)"
       >
         <p>{{ post.text }}</p>
         <small>
-          {{ post.createdAt.getDate() }}/
-          {{ post.createdAt.getMonth() + 1 }}/
-          {{ post.createdAt.getFullYear() }}
+         <small>
+          {{ new Date(post.createdAt).getDate() }}/
+          {{ new Date(post.createdAt).getMonth() + 1 }}/
+          {{ new Date(post.createdAt).getFullYear() }}
+</small>
         </small>
       </div>
     </div>
@@ -22,7 +32,7 @@
 </template>
 
 <script>
-import { getPosts } from '../PostService';
+import { getPosts, insertPost , deletePost } from '../PostService';
 export default {
   name: 'PostComponent',
   data() {
@@ -38,11 +48,21 @@ export default {
     } catch (error) {
       this.error = error.message;
     }
+  },
+  methods: {
+    async createPost() {
+     
+     await insertPost(this.text);
+     this.posts = await getPosts();
+        
+    },
+    async deletePosts(id) {
+    await deletePost(id);
+    this.posts = await getPosts();
+}
+
   }
 }
+
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
-
-</style>
